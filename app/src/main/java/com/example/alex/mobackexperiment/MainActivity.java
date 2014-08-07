@@ -8,14 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -33,6 +28,9 @@ public class MainActivity extends Activity {
     static String won = "0";
     static String lost = "0";
     boolean gameover = false, checker = false;
+
+    Handler compTurnHandler = new Handler();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,10 +144,16 @@ public class MainActivity extends Activity {
             ticArray[ticNumber][tacNumber] = 1;
             checkYourWin();
             updateScreen();
-            compTurn();
-            checkCompWin();
-            updateScreen();
-            checkTie();
+            //Delay comp turn by 500 ms
+            compTurnHandler.postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    compTurn();
+                    checkCompWin();
+                    updateScreen();
+                    checkTie();
+                }
+            }, 500);
         }
         else {
             Toast.makeText(this, "Invalid Choice", Toast.LENGTH_SHORT).show();
