@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="moback-androidsdk-v0.115">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/moback-androidsdk-v0.115.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
