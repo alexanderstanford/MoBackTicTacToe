@@ -29,6 +29,9 @@ public class MainActivity extends Activity {
     static String lost = "0";
     boolean gameover = false, checker = false;
 
+    Handler compTurnHandler = new Handler();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,10 +144,16 @@ public class MainActivity extends Activity {
             ticArray[ticNumber][tacNumber] = 1;
             checkYourWin();
             updateScreen();
-            compTurn();
-            checkCompWin();
-            updateScreen();
-            checkTie();
+            //Delay comp turn by 500 ms
+            compTurnHandler.postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    compTurn();
+                    checkCompWin();
+                    updateScreen();
+                    checkTie();
+                }
+            }, 500);
         }
         else {
             Toast.makeText(this, "Invalid Choice", Toast.LENGTH_SHORT).show();
