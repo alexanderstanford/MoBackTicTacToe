@@ -4,23 +4,21 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     public final String App_Key = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
     public final String Dev_Key = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
-    View screenView = null;
-    static int touchX = 0;
-    static int touchY = 0;
     static int screenSizeX = 0;
     static int screenSizeY = 0;
     static int[][] ticArray;
@@ -38,11 +36,24 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         DisplayMetrics dm1 = getResources().getDisplayMetrics();
         screenSizeX = dm1.widthPixels / 3;
         screenSizeY = dm1.heightPixels / 3;
         ticArray = new int[3][3];
+        adjustScreen();
         initializeTicArray();
+
+        ((TextView)findViewById(R.id.tic1)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic2)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic3)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic4)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic5)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic6)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic7)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic8)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic9)).setOnClickListener(this);
 
     }
 
@@ -66,7 +77,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    /*@Override
     public boolean onTouchEvent(MotionEvent event) {
         if(!mIsYourTurn) {
             return false;
@@ -76,59 +87,79 @@ public class MainActivity extends Activity {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if(!gameover) {
-                    clicked(x, y);
+                    clicked(x);
                 }
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
         }
         return false;
-    }
+    }*/
 
-    public void clicked(int x, int y) {
-        if(x > 0 && x < screenSizeX && y > 0 && y < screenSizeY) {
-            ticNumber = 0;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > 0 && y < screenSizeY) {
-            ticNumber = 1;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > 0 && y < screenSizeY) {
-            ticNumber = 2;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > 0 && x < screenSizeX && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 0;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 1;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 2;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > 0 && x < screenSizeX && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 0;
-            tacNumber = 2;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 1;
-            tacNumber = 2;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 2;
-            tacNumber = 2;
-            ticLogic();
+    public void clicked(int x) {
+        if(mIsYourTurn) {
+            if (x == 1) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 2) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 3) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 4) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 5) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 6) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 7) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
+            if (x == 8) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
+            if (x == 9) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
         }
     }
 
@@ -197,6 +228,20 @@ public class MainActivity extends Activity {
 
             }
         }
+    }
+
+    public void adjustScreen() {
+        int textSizeAdjust = screenSizeX * 3;
+        textSizeAdjust = textSizeAdjust / 4;
+        int z = 1;
+
+        while(z != 10) {
+            int id = getResources().getIdentifier("tic" + Integer.toString(z), "id", MainActivity.this.getPackageName());
+            TextView tv = (TextView) findViewById(id);
+            tv.setTextSize(textSizeAdjust);
+            z = z + 1;
+        }
+
     }
 
     public void updateScreen () {
@@ -504,4 +549,36 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tic1:
+                clicked(1);
+                break;
+            case R.id.tic2:
+                clicked(2);
+                break;
+            case R.id.tic3:
+                clicked(3);
+                break;
+            case R.id.tic4:
+                clicked(4);
+                break;
+            case R.id.tic5:
+                clicked(5);
+                break;
+            case R.id.tic6:
+                clicked(6);
+                break;
+            case R.id.tic7:
+                clicked(7);
+                break;
+            case R.id.tic8:
+                clicked(8);
+                break;
+            case R.id.tic9:
+                clicked(9);
+                break;
+        }
+    }
 }
