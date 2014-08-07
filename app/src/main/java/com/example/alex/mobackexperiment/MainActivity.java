@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     boolean gameover = false, checker = false;
 
     Handler compTurnHandler = new Handler();
+    private boolean mIsYourTurn = true;
 
 
     @Override
@@ -67,12 +68,16 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(!mIsYourTurn) {
+            return false;
+        }
         int x = (int)event.getX();
         int y = (int)event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(!gameover)
-                clicked(x,y);
+                if(!gameover) {
+                    clicked(x, y);
+                }
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
         }
@@ -142,6 +147,7 @@ public class MainActivity extends Activity {
     public void ticLogic() {
         if(ticArray[ticNumber][tacNumber] == 0) {
             ticArray[ticNumber][tacNumber] = 1;
+            mIsYourTurn = false;
             checkYourWin();
             updateScreen();
             //Delay comp turn by 500 ms
@@ -152,6 +158,7 @@ public class MainActivity extends Activity {
                     checkCompWin();
                     updateScreen();
                     checkTie();
+                    mIsYourTurn = true;
                 }
             }, 500);
         }
