@@ -1,4 +1,4 @@
-package com.example.alex.mobackexperiment;
+package com.example.alex.mobackexperiment.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,20 +7,16 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.alex.mobackexperiment.R;
 
 import java.util.Random;
 
 
 public class MainActivity extends Activity {
 
-    public final String App_Key = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
-    public final String Dev_Key = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
-    View screenView = null;
-    static int touchX = 0;
-    static int touchY = 0;
     static int screenSizeX = 0;
     static int screenSizeY = 0;
     static int[][] ticArray;
