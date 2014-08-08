@@ -1,6 +1,11 @@
-package com.example.alex.mobackexperiment;
+package com.example.alex.mobackexperiment.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -9,8 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.alex.mobackexperiment.R;
 
 import java.util.Random;
 
@@ -19,6 +27,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public final String App_Key = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
     public final String Dev_Key = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
+
     static int screenSizeX = 0;
     static int screenSizeY = 0;
     static int[][] ticArray;
@@ -29,7 +38,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     Handler compTurnHandler = new Handler();
     private boolean mIsYourTurn = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +52,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ticArray = new int[3][3];
         adjustScreen();
         initializeTicArray();
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         ((TextView)findViewById(R.id.tic1)).setOnClickListener(this);
         ((TextView)findViewById(R.id.tic2)).setOnClickListener(this);
@@ -199,33 +213,35 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public void compTurn() {
-        if(!gameover) {
-            checker = false;
-            int x = 0;
-            int y = 0;
+        if(!mIsYourTurn) {
+            if (!gameover) {
+                checker = false;
+                int x = 0;
+                int y = 0;
 
-            while (x != 3) {
-                while (y != 3) {
-                    if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
-                        checker = true;
+                while (x != 3) {
+                    while (y != 3) {
+                        if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
+                            checker = true;
+                        }
+                        y = y + 1;
                     }
-                    y = y + 1;
-                }
-                x = x + 1;
-                y = 0;
-            }
-
-            doNotOpen();
-
-            while (checker) {
-                Random rand = new Random();
-                x = rand.nextInt(3);
-                y = rand.nextInt(3);
-                if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
-                    ticArray[x][y] = -1;
-                    checker = false;
+                    x = x + 1;
+                    y = 0;
                 }
 
+                doNotOpen();
+
+                while (checker) {
+                    Random rand = new Random();
+                    x = rand.nextInt(3);
+                    y = rand.nextInt(3);
+                    if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
+                        ticArray[x][y] = -1;
+                        checker = false;
+                    }
+
+                }
             }
         }
     }
@@ -278,6 +294,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void resetTic() {
         int x = 0;
         int y = 0;
+        mIsYourTurn = true;
 
         while(x != 3) {
             while(y != 3) {
@@ -289,6 +306,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         updateScreen();
         gameover = false;
+        Toast.makeText(this, "Game Resest", Toast.LENGTH_SHORT).show();
     }
 
     public void checkYourWin() {
@@ -319,7 +337,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         wins = wins + 1;
         gameover = true;
         won = String.valueOf(wins);
-        Toast.makeText(this, "You Win", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "You Win", Toast.LENGTH_SHORT).show();
     }
 
     public void loss() {
@@ -327,7 +345,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             losses = losses + 1;
             gameover = true;
             lost = String.valueOf(losses);
-            Toast.makeText(this, "You Lose", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You Lose", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -348,7 +366,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             if (z == 9) {
                 gameover = false;
-                Toast.makeText(this, "You've Tied", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You've Tied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -581,4 +599,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
+
+
+
+    private SensorManager mSensorManager;
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
+
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+
+        public void onSensorChanged(SensorEvent se) {
+            float x = se.values[0];
+            float y = se.values[1];
+            float z = se.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.8f + delta; // perform low-cut filter
+            if(mAccel > 10){
+                resetTic();
+            }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor arg0, int arg1) {
+
+        }
+    };
+
 }
