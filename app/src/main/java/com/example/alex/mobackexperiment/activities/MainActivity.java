@@ -1,11 +1,19 @@
 package com.example.alex.mobackexperiment.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +23,10 @@ import com.example.alex.mobackexperiment.R;
 import java.util.Random;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
+
+    public final String App_Key = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
+    public final String Dev_Key = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
 
     static int screenSizeX = 0;
     static int screenSizeY = 0;
@@ -28,17 +39,35 @@ public class MainActivity extends Activity {
     Handler compTurnHandler = new Handler();
     private boolean mIsYourTurn = true;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         DisplayMetrics dm1 = getResources().getDisplayMetrics();
         screenSizeX = dm1.widthPixels / 3;
         screenSizeY = dm1.heightPixels / 3;
         ticArray = new int[3][3];
+        adjustScreen();
         initializeTicArray();
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
+
+        ((TextView)findViewById(R.id.tic1)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic2)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic3)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic4)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic5)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic6)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic7)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic8)).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tic9)).setOnClickListener(this);
 
     }
 
@@ -62,7 +91,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    /*@Override
     public boolean onTouchEvent(MotionEvent event) {
         if(!mIsYourTurn) {
             return false;
@@ -72,59 +101,79 @@ public class MainActivity extends Activity {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if(!gameover) {
-                    clicked(x, y);
+                    clicked(x);
                 }
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
         }
         return false;
-    }
+    }*/
 
-    public void clicked(int x, int y) {
-        if(x > 0 && x < screenSizeX && y > 0 && y < screenSizeY) {
-            ticNumber = 0;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > 0 && y < screenSizeY) {
-            ticNumber = 1;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > 0 && y < screenSizeY) {
-            ticNumber = 2;
-            tacNumber = 0;
-            ticLogic();
-        }
-        if(x > 0 && x < screenSizeX && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 0;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 1;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > screenSizeY && y < screenSizeY * 2) {
-            ticNumber = 2;
-            tacNumber = 1;
-            ticLogic();
-        }
-        if(x > 0 && x < screenSizeX && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 0;
-            tacNumber = 2;
-            ticLogic();
-        }
-        if(x > screenSizeX && x < screenSizeX * 2 && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 1;
-            tacNumber = 2;
-            ticLogic();
-        }
-        if(x > screenSizeX * 2 && x < screenSizeX * 3 && y > screenSizeY * 2 && y < screenSizeY * 3) {
-            ticNumber = 2;
-            tacNumber = 2;
-            ticLogic();
+    public void clicked(int x) {
+        if(mIsYourTurn) {
+            if (x == 1) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 2) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 3) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 0;
+                    ticLogic();
+                }
+            }
+            if (x == 4) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 5) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 6) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 1;
+                    ticLogic();
+                }
+            }
+            if (x == 7) {
+                if (!gameover) {
+                    ticNumber = 0;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
+            if (x == 8) {
+                if (!gameover) {
+                    ticNumber = 1;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
+            if (x == 9) {
+                if (!gameover) {
+                    ticNumber = 2;
+                    tacNumber = 2;
+                    ticLogic();
+                }
+            }
         }
     }
 
@@ -164,35 +213,51 @@ public class MainActivity extends Activity {
     }
 
     public void compTurn() {
-        if(!gameover) {
-            checker = false;
-            int x = 0;
-            int y = 0;
+        if(!mIsYourTurn) {
+            if (!gameover) {
+                checker = false;
+                int x = 0;
+                int y = 0;
 
-            while (x != 3) {
-                while (y != 3) {
-                    if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
-                        checker = true;
+                while (x != 3) {
+                    while (y != 3) {
+                        if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
+                            checker = true;
+                        }
+                        y = y + 1;
                     }
-                    y = y + 1;
-                }
-                x = x + 1;
-                y = 0;
-            }
-
-            doNotOpen();
-
-            while (checker) {
-                Random rand = new Random();
-                x = rand.nextInt(3);
-                y = rand.nextInt(3);
-                if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
-                    ticArray[x][y] = -1;
-                    checker = false;
+                    x = x + 1;
+                    y = 0;
                 }
 
+                doNotOpen();
+
+                while (checker) {
+                    Random rand = new Random();
+                    x = rand.nextInt(3);
+                    y = rand.nextInt(3);
+                    if (ticArray[x][y] != 1 && ticArray[x][y] != -1) {
+                        ticArray[x][y] = -1;
+                        checker = false;
+                    }
+
+                }
             }
         }
+    }
+
+    public void adjustScreen() {
+        int textSizeAdjust = screenSizeX * 3;
+        textSizeAdjust = textSizeAdjust / 4;
+        int z = 1;
+
+        while(z != 10) {
+            int id = getResources().getIdentifier("tic" + Integer.toString(z), "id", MainActivity.this.getPackageName());
+            TextView tv = (TextView) findViewById(id);
+            tv.setTextSize(textSizeAdjust);
+            z = z + 1;
+        }
+
     }
 
     public void updateScreen () {
@@ -229,6 +294,7 @@ public class MainActivity extends Activity {
     public void resetTic() {
         int x = 0;
         int y = 0;
+        mIsYourTurn = true;
 
         while(x != 3) {
             while(y != 3) {
@@ -240,6 +306,7 @@ public class MainActivity extends Activity {
         }
         updateScreen();
         gameover = false;
+        Toast.makeText(this, "Game Resest", Toast.LENGTH_SHORT).show();
     }
 
     public void checkYourWin() {
@@ -270,7 +337,7 @@ public class MainActivity extends Activity {
         wins = wins + 1;
         gameover = true;
         won = String.valueOf(wins);
-        Toast.makeText(this, "You Win", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "You Win", Toast.LENGTH_SHORT).show();
     }
 
     public void loss() {
@@ -278,7 +345,7 @@ public class MainActivity extends Activity {
             losses = losses + 1;
             gameover = true;
             lost = String.valueOf(losses);
-            Toast.makeText(this, "You Lose", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You Lose", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -299,7 +366,7 @@ public class MainActivity extends Activity {
 
             if (z == 9) {
                 gameover = false;
-                Toast.makeText(this, "You've Tied", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You've Tied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -499,5 +566,65 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tic1:
+                clicked(1);
+                break;
+            case R.id.tic2:
+                clicked(2);
+                break;
+            case R.id.tic3:
+                clicked(3);
+                break;
+            case R.id.tic4:
+                clicked(4);
+                break;
+            case R.id.tic5:
+                clicked(5);
+                break;
+            case R.id.tic6:
+                clicked(6);
+                break;
+            case R.id.tic7:
+                clicked(7);
+                break;
+            case R.id.tic8:
+                clicked(8);
+                break;
+            case R.id.tic9:
+                clicked(9);
+                break;
+        }
+    }
+
+
+
+    private SensorManager mSensorManager;
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
+
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+
+        public void onSensorChanged(SensorEvent se) {
+            float x = se.values[0];
+            float y = se.values[1];
+            float z = se.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.8f + delta; // perform low-cut filter
+            if(mAccel > 10){
+                resetTic();
+            }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor arg0, int arg1) {
+
+        }
+    };
 
 }
