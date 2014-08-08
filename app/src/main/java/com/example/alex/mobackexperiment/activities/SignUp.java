@@ -234,7 +234,7 @@ public class SignUp extends Activity implements LoaderCallbacks<Cursor>{
             @Override
             public void callback(MoBackStatus moBackStatus) {
                 Toast.makeText(getApplicationContext(),"Response: " + moBackStatus.getCode(),Toast.LENGTH_SHORT).show();
-                if (moBackStatus.getCode() == 1000) {
+                if (moBackStatus.getCode() == MoBackStatus.STATUS_OKAY) {
                     //Success
                     launchHome();
                 } else {

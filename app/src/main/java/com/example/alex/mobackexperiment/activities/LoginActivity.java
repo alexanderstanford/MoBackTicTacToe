@@ -240,10 +240,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
     }
 
     private void loginTask(String password, String username){
-        SSOManager.logIn(password,username, new BasicCompletionBlock() {
+        SSOManager.logIn(username, password,  new BasicCompletionBlock() {
             @Override
             public void callback(MoBackStatus moBackStatus) {
-                if(moBackStatus.getCode() == 1000){
+                if(moBackStatus.getCode() == MoBackStatus.STATUS_OKAY){
                     //Success
                     launchHome();
                 }else{

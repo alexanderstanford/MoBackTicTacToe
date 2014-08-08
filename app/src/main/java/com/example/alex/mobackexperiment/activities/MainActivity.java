@@ -2,6 +2,7 @@ package com.example.alex.mobackexperiment.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,24 +10,22 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alex.mobackexperiment.R;
+import com.example.alex.mobackexperiment.TicTacToeApp;
+import com.moback.android.MoBack;
+import com.moback.android.SSOManager;
 
 import java.util.Random;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
-
-    public final String App_Key = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
-    public final String Dev_Key = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
 
     static int screenSizeX = 0;
     static int screenSizeY = 0;
@@ -43,6 +42,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MoBack.setApplicationKeys(this, TicTacToeApp.APP_KEY, TicTacToeApp.DEV_KEY);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -84,9 +85,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            resetTic();
-            return true;
+        switch(id){
+            case R.id.action_settings:
+                resetTic();
+                break;
+            case R.id.action_logout:
+                if(SSOManager.isUserLoggedIn()) {
+                    SSOManager.logoutUser();
+                }
+                Intent mIntent = new Intent(this, LoginActivity.class);
+                mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mIntent);
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

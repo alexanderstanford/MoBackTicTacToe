@@ -9,9 +9,9 @@ import com.moback.android.MoBack;
  */
 public class TicTacToeApp extends Application {
 
-    public static final String APP_KEY      = "MDQwNGNkMmYtZjI2Yi00ODExLTgyY2EtNjM2NDc2NzY5OWVm";
-    public static final String DEV_KEY      = "MTRjZTc1MjYtOGE3NS00NjViLThhZWMtOGNlMmIxNDk1YTdi";
-    public static final String PROD_KEY     = "OTY2NTE5OGItNTlhYS00ZmFhLTgwMDYtOTA2MmEyMDEwNWZj";
+    public static final String APP_KEY      = "Y2IyMGQ2NmYtZmY4ZS00NGM5LTkzNWYtODVjZDc4OTM0NWE4";
+    public static final String DEV_KEY      = "MDM0ZGE1MDItNGY2Mi00Y2U5LTg2OWMtNDJmNjI2YjdjNDhi";
+    public static final String PROD_KEY     = "YjBhNmI4OWUtMWIyNy00Yjc4LWJhNWItZTMyNTQ3ZDgxZjRl";
 
 
     /**
@@ -25,7 +25,6 @@ public class TicTacToeApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
 
     }
 
