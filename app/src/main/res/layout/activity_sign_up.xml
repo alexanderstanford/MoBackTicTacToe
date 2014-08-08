@@ -61,6 +61,14 @@
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/sign_up_login"
+                    android:id="@+id/tv_sign_up_login"
+                    android:layout_gravity="center_horizontal" />
+
             </LinearLayout>
     </ScrollView>
 

@@ -47,6 +47,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView mSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         if(SSOManager.isUserLoggedIn()){
             launchHome();
         }
+
+        ((TextView)findViewById(R.id.tv_login_signup)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchSignUp();
+            }
+        });
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -235,7 +243,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         SSOManager.logIn(password,username, new BasicCompletionBlock() {
             @Override
             public void callback(MoBackStatus moBackStatus) {
-                if(moBackStatus.getCode() == 200){
+                if(moBackStatus.getCode() == 1000){
                     //Success
                     launchHome();
                 }else{
@@ -251,6 +259,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
 
     private void launchHome(){
         Intent mGameIntent = new Intent(this, MainActivity.class);
+        startActivity(mGameIntent);
+    }
+
+    private void launchSignUp(){
+        Intent mGameIntent = new Intent(this, SignUp.class);
         startActivity(mGameIntent);
     }
 }
